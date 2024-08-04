@@ -11,6 +11,9 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -19,6 +22,7 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField()
     category = models.OneToOneField(Category, on_delete=models.PROTECT, null=False, blank=False)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class ProductImage(models.Model):
