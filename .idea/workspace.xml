@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0d4e7340-c3f4-42a1-8598-ab2fdc0113c7" name="Changes" comment="" />
+    <list default="true" id="0d4e7340-c3f4-42a1-8598-ab2fdc0113c7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/localfood_app/form.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/localfood_app/templates/localfood_app/signup.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/localfood_app/validators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LocalFood/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/LocalFood/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/localfood_app/from.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/localfood_app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/localfood_app/templates/localfood_app/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/localfood_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/localfood_app/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,8 +22,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="CSS File" />
+        <option value="Python Script" />
         <option value="HTML File" />
       </list>
     </option>
@@ -57,9 +66,10 @@
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
     "Python.models.executor": "Run",
+    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "develop",
-    "last_opened_file_path": "/home/komp/PycharmProjects/prework/ONL_PYT_W_34_timetracker",
+    "git-widget-placeholder": "feature-2.2",
+    "last_opened_file_path": "/home/komp/PycharmProjects/prework/ONL_PYT_W_34_zaawansowane_django",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -81,6 +91,7 @@
       <recent name="$PROJECT_DIR$/localfood_app/static/images" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/localfood_app/templates/localfood_app" />
       <recent name="$PROJECT_DIR$/localfood_app" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/localfood_app/static/images/localfood_app" />
@@ -268,6 +279,7 @@
       <workItem from="1722438833740" duration="1838000" />
       <workItem from="1722676052039" duration="1567000" />
       <workItem from="1722756475919" duration="27649000" />
+      <workItem from="1722869775785" duration="7532000" />
     </task>
     <servers />
   </component>
