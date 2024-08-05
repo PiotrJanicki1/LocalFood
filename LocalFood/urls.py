@@ -16,9 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from localfood_app.views import (
+    CreateUserView
+)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('localfood_app.urls')),
+    path('signup/', CreateUserView.as_view(), name='signup'),
 ]
