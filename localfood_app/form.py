@@ -24,3 +24,8 @@ class UserCreateForm(forms.Form):
         if data['password1'] != data['password2']:
             raise ValidationError('Passwords must match')
         return data
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)

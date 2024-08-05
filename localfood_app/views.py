@@ -1,7 +1,10 @@
+from audioop import reverse
+
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Category, Product, User
-from .form import UserCreateForm
+from .form import UserCreateForm, LoginForm
 
 
 class HomePageView(View):
@@ -19,7 +22,7 @@ class HomePageView(View):
 
 class CreateUserView(View):
     def get(self, request):
-        form = UserCreateForm
+        form = UserCreateForm()
         return render(request, 'localfood_app/signup.html', {'form': form})
 
     def post(self, request):
@@ -41,6 +44,25 @@ class CreateUserView(View):
                 user.is_buyer = True
 
             user.save()
-            return redirect('login')
+            return redirect('localfood_app:login')
         else:
             return render(request, 'localfood_app/signup.html', {'form': form})
+
+
+class LoginView(View):
+    def get(self, request):
+        form = LoginForm()
+        return render(request, 'localfood_app/login.html', {'form': form})
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password'],
+            )
+            if user:
+                login(request, user)
+                return redirect("localfood_app:home")
+
+        return render(request, 'localfood_app/login.html', {'form': form})
