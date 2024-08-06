@@ -1,20 +1,25 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Category, Product, User
+from .models import Product, User
 from .form import UserCreateForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class HomePageView(View):
+class HomePageView(LoginRequiredMixin, View):
     def get(self, request):
-        categories = Category.objects.all()
-        products = Product.objects.order_by('-created_at')
+        user = request.user
 
+        products = Product.objects.order_by('-created_at')
         ctx = {
-            'categories': categories,
             'products': products
         }
 
-        return render(request, 'localfood_app/base.html', ctx)
+        if user.is_buyer:
+            template_name = 'localfood_app/dashboard_consumer.html'
+        elif user.is_seller:
+            template_name = 'localfood_app/dashboard_business.html'
+
+        return render(request, template_name, ctx)
 
 
 class CreateUserView(View):
@@ -44,3 +49,12 @@ class CreateUserView(View):
             return redirect('login')
         else:
             return render(request, 'localfood_app/signup.html', {'form': form})
+
+
+class SalesPageView(View):
+    def get(self, request):
+        return render(request, 'localfood_app/sales_page.html')
+
+
+
+
