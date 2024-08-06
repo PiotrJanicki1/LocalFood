@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Strona główna{% endblock %}</title>
+    <title>{% block title %}Home page{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -15,26 +15,28 @@
             <header class="row bg-light py-3 align-items-center">
                 <div class="col-2">
                     <h1 id="logo">
-                        <img src="{% static 'images/localfood_app/logo2.png' %}" alt="Logo">
+                        <a href="/home/">
+                            <img src="{% static 'images/localfood_app/logo2.png' %}" alt="Logo">
+                        </a>
                     </h1>
                 </div>
                 <div class="col-4 text-right">
                     <input type="text" id="search" class="form-control" placeholder="Wyszukiwarka">
                 </div>
                 <div class="col-6 header-buttons">
-                    <a class="btn btn-primary">Koszyk</a>
-                    <a class="btn btn-secondary">Profil</a>
+                    <a href="/sales/" class="btn btn-primary">Sales</a>
+                    <a class="btn btn-secondary">Profile</a>
                 </div>
             </header>
             <div class="row">
                 <nav class="col-md-2 bg-light py-3">
-                    <h4>Kategorie</h4>
+                    <h4>Categories</h4>
                     <div class="container">
                         <table class="table">
                             <tbody>
                                 {% for category in categories %}
                                     <tr>
-                                        <td>{{ category }}</td>
+                                        <td>{{ category.name }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
