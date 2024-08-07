@@ -1,4 +1,5 @@
 from typing import Any
+from .models import Product, ProductImage, Category
 
 import django.forms as forms
 from django.core.exceptions import ValidationError
@@ -24,3 +25,12 @@ class UserCreateForm(forms.Form):
         if data['password1'] != data['password2']:
             raise ValidationError('Passwords must match')
         return data
+
+class AddProductForm(forms.Form):
+   name = forms.CharField(max_length=100)
+   description = forms.CharField(widget=forms.Textarea)
+   price = forms.DecimalField(max_digits=5, decimal_places=2)
+   quantity = forms.IntegerField(min_value=1)
+   category = forms.ModelChoiceField(queryset=Category.objects.all())
+   file_path = forms.FilePathField
+   image_name = forms.CharField(widget=forms.Textarea)

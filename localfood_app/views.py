@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Product, User
-from .form import UserCreateForm
+from .form import UserCreateForm, AddProductForm, AddImageForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -54,6 +54,32 @@ class CreateUserView(View):
 class SalesPageView(View):
     def get(self, request):
         return render(request, 'localfood_app/sales_page.html')
+
+
+class AddProductView(View):
+    def get(self, request):
+        ctx = {
+            'product_form': AddProductForm,
+            'image_form': AddImageForm,
+        }
+
+        return render(request, 'localfood_app/add_product.html', ctx)
+
+    def post(self, request):
+        product_form = AddProductForm(request.POST)
+        image_form = AddImageForm(request.POST, request.FILES)
+
+        if product_form.is_valid() and image_form.is_valid():
+            product = product_form.save(commit=False)
+            product.seller = request.user
+            product.save()
+
+            image = image_form.save(commit=False)
+            image.product = product
+            image.save()
+
+            return redirect('/sales/')
+        return render(request, 'localfood_app/add_product.html', {'product_form': product_form})
 
 
 
