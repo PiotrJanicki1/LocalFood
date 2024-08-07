@@ -20,7 +20,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     quantity = models.PositiveIntegerField()
-    category = models.OneToOneField(Category, on_delete=models.PROTECT, null=False, blank=False)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, null=False, blank=False)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
