@@ -49,20 +49,20 @@ class CreateUserView(View):
             return render(request, 'localfood_app/signup.html', {'form': form})
 
 
-class LoginView(View):
-    def get(self, request):
-        form = LoginForm()
-        return render(request, 'localfood_app/login.html', {'form': form})
-
-    def post(self, request):
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user = authenticate(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password'],
-            )
-            if user:
-                login(request, user)
-                return redirect("localfood_app:home")
-
-        return render(request, 'localfood_app/login.html', {'form': form})
+# class LoginView(View):
+#     def get(self, request):
+#         form = LoginForm()
+#         return render(request, 'localfood_app/login.html', {'form': form})
+#
+#     def post(self, request):
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             user = authenticate(
+#                 username=form.cleaned_data['username'],
+#                 password=form.cleaned_data['password'],
+#             )
+#             if user:
+#                 login(request, user)
+#                 return redirect("localfood_app:home")
+#
+#         return render(request, 'localfood_app/login.html', {'form': form})
