@@ -27,6 +27,12 @@ class UserCreateForm(forms.Form):
         return data
 
 
+class LoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
+
+
 class AddProductForm(forms.ModelForm):
     file_path = forms.ImageField(required=True)
 

@@ -1,7 +1,8 @@
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Product, User
-from .form import UserCreateForm, AddProductForm
+from .form import UserCreateForm, AddProductForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -51,6 +52,25 @@ class CreateUserView(View):
             return render(request, 'localfood_app/signup.html', {'form': form})
 
 
+class LoginView(View):
+    def get(self, request):
+        form = LoginForm()
+        return render(request, 'localfood_app/login.html', {'form': form})
+
+    def post(self, request):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password'],
+            )
+            if user:
+                login(request, user)
+                return redirect("localfood_app:home")
+
+        return render(request, 'localfood_app/login.html', {'form': form})
+
+
 class SalesPageView(View):
     def get(self, request):
         return render(request, 'localfood_app/sales_page.html')
@@ -67,7 +87,7 @@ class AddProductView(View):
 
         if form.is_valid():
             form.save()
-            return redirect('/sales/')
+            return redirect('localfood_app:sales')
 
         return render(request, 'localfood_app/add_product.html', {'form': form})
 
