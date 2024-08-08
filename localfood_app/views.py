@@ -61,25 +61,9 @@ class AddProductView(View):
         form = AddProductForm()
         return render(request, 'localfood_app/add_product.html', {'form': form})
 
-    # def post(self, request):
-    #     product_form = ProductForm(request.POST)
-    #     image_form = ProductImageForm(request.POST, request.FILES)
-    #
-    #     if product_form.is_valid() and image_form.is_valid():
-    #         product = product_form.save(commit=False)
-    #         product.seller = request.user  # Przypisz zalogowanego użytkownika jako sprzedawcę
-    #         product.save()
-    #
-    #         image = image_form.save(commit=False)
-    #         image.product = product
-    #         image.save()
-    #
-    #         return redirect('product_list')  # Upewnij się, że masz odpowiednią nazwę URL
-    #     return render(request, 'localfood_app/add_product.html',
-    #                   {'product_form': product_form, 'image_form': image_form})
 
     def post(self, request):
-        form = AddProductForm(request.POST, request.FILES)  # Dodaj request.FILES
+        form = AddProductForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
