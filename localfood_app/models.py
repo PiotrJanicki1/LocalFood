@@ -18,7 +18,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
     quantity = models.PositiveIntegerField()
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=False, blank=False)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -27,7 +27,6 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     file_path = models.ImageField(upload_to='product_image/')
-    image_name = models.CharField(max_length=100)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, blank=False)
 
 

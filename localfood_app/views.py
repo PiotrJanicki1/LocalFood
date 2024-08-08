@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Product, User
-from .form import UserCreateForm, AddProductForm, AddImageForm
+from .form import UserCreateForm, AddProductForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -58,28 +58,36 @@ class SalesPageView(View):
 
 class AddProductView(View):
     def get(self, request):
-        ctx = {
-            'product_form': AddProductForm,
-            'image_form': AddImageForm,
-        }
+        form = AddProductForm()
+        return render(request, 'localfood_app/add_product.html', {'form': form})
 
-        return render(request, 'localfood_app/add_product.html', ctx)
+    # def post(self, request):
+    #     product_form = ProductForm(request.POST)
+    #     image_form = ProductImageForm(request.POST, request.FILES)
+    #
+    #     if product_form.is_valid() and image_form.is_valid():
+    #         product = product_form.save(commit=False)
+    #         product.seller = request.user  # Przypisz zalogowanego użytkownika jako sprzedawcę
+    #         product.save()
+    #
+    #         image = image_form.save(commit=False)
+    #         image.product = product
+    #         image.save()
+    #
+    #         return redirect('product_list')  # Upewnij się, że masz odpowiednią nazwę URL
+    #     return render(request, 'localfood_app/add_product.html',
+    #                   {'product_form': product_form, 'image_form': image_form})
 
     def post(self, request):
-        product_form = AddProductForm(request.POST)
-        image_form = AddImageForm(request.POST, request.FILES)
+        form = AddProductForm(request.POST, request.FILES)  # Dodaj request.FILES
 
-        if product_form.is_valid() and image_form.is_valid():
-            product = product_form.save(commit=False)
-            product.seller = request.user
-            product.save()
-
-            image = image_form.save(commit=False)
-            image.product = product
-            image.save()
-
+        if form.is_valid():
+            form.save()
             return redirect('/sales/')
-        return render(request, 'localfood_app/add_product.html', {'product_form': product_form})
+
+        return render(request, 'localfood_app/add_product.html', {'form': form})
+
+
 
 
 

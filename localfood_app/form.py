@@ -26,11 +26,27 @@ class UserCreateForm(forms.Form):
             raise ValidationError('Passwords must match')
         return data
 
-class AddProductForm(forms.Form):
-   name = forms.CharField(max_length=100)
-   description = forms.CharField(widget=forms.Textarea)
-   price = forms.DecimalField(max_digits=5, decimal_places=2)
-   quantity = forms.IntegerField(min_value=1)
-   category = forms.ModelChoiceField(queryset=Category.objects.all())
-   file_path = forms.FilePathField
-   image_name = forms.CharField(widget=forms.Textarea)
+
+class AddProductForm(forms.ModelForm):
+    file_path = forms.ImageField(required=True)
+
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'price', 'quantity', 'category', 'file_path']
+
+
+    def save(self, commit=True):
+        product = super().save(commit=False)
+        if commit:
+            product.save()
+
+        if 'file_path' in self.files:
+            ProductImage.objects.create(
+                product=product,
+                file_path=self.files['file_path'],
+            )
+
+        return product
+
+
+
