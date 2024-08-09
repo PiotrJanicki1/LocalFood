@@ -24,6 +24,9 @@ class Product(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def get_primary_image(self):
+        return self.productimage_set.first()
+
 
 class ProductImage(models.Model):
     file_path = models.ImageField(upload_to='product_image/')

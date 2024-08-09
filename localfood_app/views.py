@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate, login
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Product, User
+from .models import Product, User, ProductImage
 from .form import UserCreateForm, AddProductForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -86,10 +87,26 @@ class AddProductView(View):
         form = AddProductForm(request.POST, request.FILES)
 
         if form.is_valid():
-            form.save()
-            return redirect('localfood_app:sales')
+            product = form.save(commit=False)
+            product.seller = request.user
+            product.save()
 
+            if 'file_path' in request.FILES:
+                ProductImage.objects.create(
+                    product=product,
+                    file_path=request.FILES['file_path'],
+                )
+
+            return redirect('localfood_app:sales')
         return render(request, 'localfood_app/add_product.html', {'form': form})
+
+
+class OngoingSaleView(View):
+    def get(self, request):
+        paginator = Paginator(Product.objects.filter(seller=request.user).order_by('created_at'), 10)
+        page = request.GET.get('page')
+        products = paginator.get_page(page)
+        return render(request, 'localfood_app/ongoing_sale.html', {'products': products})
 
 
 

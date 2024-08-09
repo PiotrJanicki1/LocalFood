@@ -41,18 +41,5 @@ class AddProductForm(forms.ModelForm):
         fields = ['name', 'description', 'price', 'quantity', 'category', 'file_path']
 
 
-    def save(self, commit=True):
-        product = super().save(commit=False)
-        if commit:
-            product.save()
-
-        if 'file_path' in self.files:
-            ProductImage.objects.create(
-                product=product,
-                file_path=self.files['file_path'],
-            )
-
-        return product
-
 
 
