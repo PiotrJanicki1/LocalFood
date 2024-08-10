@@ -15,7 +15,7 @@ class HomePageView(LoginRequiredMixin, View):
         ctx = {
             'products': products
         }
-        return render(request, 'localfood_app/base.html', ctx)
+        return render(request, 'localfood_app/dashboard.html', ctx)
 
 
 class CreateUserView(View):
@@ -101,6 +101,14 @@ class OngoingSaleView(View):
         page = request.GET.get('page')
         products = paginator.get_page(page)
         return render(request, 'localfood_app/ongoing_sale.html', {'products': products})
+
+
+class CategoryProductView(View):
+    def get(self, request, slug):
+        paginator = Paginator(Product.objects.filter(category__slug=slug).order_by('-created_at'), 10)
+        page = request.GET.get('page')
+        products = paginator.get_page(page)
+        return render(request, 'localfood_app/category_products.html', {'products': products})
 
 
 
