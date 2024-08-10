@@ -3,11 +3,11 @@
     justify-content: flex-end;
 }
 .header-buttons button {
-    margin-left: 10px;
+    margin-left: 100px;
 }
 
 body{
-    margin: 20px;
+    margin: 100px;
     background-color: #f0f0f0;
 
 }

@@ -8,14 +8,6 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-     <style>
-        .nav-link.text-dark {
-            color: #000 !important; /* Kolor tekstu na czarny */
-        }
-        .nav-link.text-dark:hover {
-            color: #000 !important; /* Kolor tekstu na czarny podczas najechania */
-        }
-    </style>
 </head>
 <body>
     <div class="main-container">
@@ -38,6 +30,13 @@
                     <div class="container mt-5">
                         <table class="table">
                             <tbody>
+                                    <tr>
+                                        <td>
+                                            <a class="nav-link text-dark" href="">
+                                                <span>Orders</span>
+                                            </a>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td>
                                             <a class="nav-link text-dark" href="{% url 'localfood_app:ongoing_sale' %}">

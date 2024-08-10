@@ -9,19 +9,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 class HomePageView(LoginRequiredMixin, View):
     def get(self, request):
-        user = request.user
-
-        products = Product.objects.order_by('-created_at')
+        paginator = Paginator(Product.objects.all().order_by('-created_at'), 10)
+        page = request.GET.get('page')
+        products = paginator.get_page(page)
         ctx = {
             'products': products
         }
-
-        if user.is_buyer:
-            template_name = 'localfood_app/dashboard_consumer.html'
-        elif user.is_seller:
-            template_name = 'localfood_app/dashboard_business.html'
-
-        return render(request, template_name, ctx)
+        return render(request, 'localfood_app/base.html', ctx)
 
 
 class CreateUserView(View):
@@ -48,7 +42,7 @@ class CreateUserView(View):
                 user.is_buyer = True
 
             user.save()
-            return redirect('login')
+            return redirect('localfood_app:login')
         else:
             return render(request, 'localfood_app/signup.html', {'form': form})
 
@@ -97,7 +91,7 @@ class AddProductView(View):
                     file_path=request.FILES['file_path'],
                 )
 
-            return redirect('localfood_app:sales')
+            return redirect('localfood_app:ongoing_sale')
         return render(request, 'localfood_app/add_product.html', {'form': form})
 
 
