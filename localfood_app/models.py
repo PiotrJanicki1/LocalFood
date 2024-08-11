@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.shortcuts import get_object_or_404
 
 
 class User(AbstractUser):
@@ -70,6 +71,24 @@ class Order(models.Model):
     realization_date = models.DateTimeField(null=True, blank=True)
     is_paid = models.BooleanField(default=False)
     is_realized = models.BooleanField(default=False)
+
+
+    def calculate_total_price(self):
+        return self.product.price * self.quantity
+
+    @classmethod
+    def add_product_to_basket(cls, user, product_id):
+        product = get_object_or_404(Product, pk=product_id)
+
+        order, created = Order.objects.get_or_create(
+            buyer=user,
+            product=product,
+            is_paid=False,
+            defaults={'quantity': 1}
+        )
+        if not created:
+            order.quantity += 1
+            order.save()
 
 
 class OrderImage(models.Model):
