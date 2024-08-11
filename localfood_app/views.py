@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Product, User, ProductImage
+from .models import Product, User, ProductImage, Order
 from .form import UserCreateForm, AddProductForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -16,6 +16,14 @@ class HomePageView(LoginRequiredMixin, View):
             'products': products
         }
         return render(request, 'localfood_app/dashboard.html', ctx)
+
+    def post(self, request):
+        product_id = request.POST.get('product_id')
+        Order.add_product_to_basket(request.user, product_id)
+
+        return redirect(request.META.get('HTTP_REFERER'))
+
+
 
 
 class CreateUserView(View):
@@ -108,7 +116,28 @@ class CategoryProductView(View):
         paginator = Paginator(Product.objects.filter(category__slug=slug).order_by('-created_at'), 10)
         page = request.GET.get('page')
         products = paginator.get_page(page)
-        return render(request, 'localfood_app/category_products.html', {'products': products})
+        return render(request, 'localfood_app/dashboard.html', {'products': products})
+
+    def post(self, request, slug):
+        product_id = request.POST.get('product_id')
+        Order.add_product_to_basket(request.user, product_id)
+
+        return redirect(request.META.get('HTTP_REFERER'))
+
+
+
+class BasketView(View):
+    def get(self, request):
+        paginator = Paginator(Order.objects.filter(is_paid=False).order_by('-created_at'), 20)
+        page = request.GET.get('page')
+        orders = paginator.get_page(page)
+        total_price = sum(order.calculate_total_price() for order in orders)
+
+        ctx = {
+            'orders': orders,
+            'total_price': total_price
+        }
+        return render(request, 'localfood_app/basket.html', ctx)
 
 
 

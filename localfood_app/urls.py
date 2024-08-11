@@ -7,7 +7,8 @@ from .views import (
     SalesPageView,
     AddProductView,
     OngoingSaleView,
-    CategoryProductView
+    CategoryProductView,
+    BasketView,
 )
 
 
@@ -22,5 +23,6 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('ongoing_sale/', OngoingSaleView.as_view(), name='ongoing_sale'),
     path('category/<slug:slug>/', CategoryProductView.as_view(), name='category'),
+    path('basket/', BasketView.as_view(), name='basket'),
 
 ]

@@ -26,7 +26,8 @@
                 {% if request.user.is_authenticated %}
                     {% if request.user.is_buyer %}
                         <div class="col-6 header-buttons">
-                            <a class="btn btn-primary">Basket</a>
+                            <a href="{% url 'localfood_app:basket' %}" class="btn btn-primary me-2">Basket</a>
+                            <a class="btn btn-primary me-2">Orders</a>
                             <a class="btn btn-secondary">Profile</a>
                         </div>
                     {% elif request.user.is_seller %}
