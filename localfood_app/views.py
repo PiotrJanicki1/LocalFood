@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Product, User, ProductImage, Order
 from .form import UserCreateForm, AddProductForm, LoginForm
@@ -138,6 +139,50 @@ class BasketView(View):
             'total_price': total_price
         }
         return render(request, 'localfood_app/basket.html', ctx)
+
+class EditBasketView(View):
+    def get(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+        return render(request, 'localfood_app/edit_basket.html', {'order': order})
+
+    def post(self, request, order_id):
+        order = Order.objects.get(id=order_id)
+        new_quantity = request.POST.get('quantity')
+
+        if new_quantity and new_quantity.isdigit():
+            new_quantity = int(new_quantity)
+            if new_quantity > 0:
+                order.quantity = new_quantity
+                order.save()
+
+                return redirect('localfood_app:basket')
+
+            return HttpResponse("Invalid quantity or method", status=400)
+
+        elif request.POST.get('_method') == 'delete':
+             order = Order.objects.get(id=order_id)
+             order.delete()
+
+             return redirect('localfood_app:basket')
+
+        return HttpResponse("Invalid request method or parameters", status=400)
+
+
+    # def delete(self, request, order_id):
+    #     if request.POST.get('_method') == 'delete':
+    #         order = Order.objects.get(id=order_id)
+    #         order.delete()
+    #         return redirect('localfood_app:basket')
+
+        return HttpResponse("Invalid request method or parameters", status=400)
+
+
+
+
+
+
+
+
 
 
 
