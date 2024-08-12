@@ -35,7 +35,7 @@
                     <td class="col-1"></td>
                     <td class="col-1">{{ order.product.price }} zł</td>
                     <td class="col-1  d-flex align-items-center justify-content-center flex-wrap">
-                        <a href="" class="btn btn-info rounded-0 text-light m-1">Edit</a>
+                        <a href="{% url 'localfood_app:edit_basket' order.id %}" class="btn btn-info rounded-0 text-light m-1">Edit</a>
                     </td>
                 </tr>
                 {% endfor %}
