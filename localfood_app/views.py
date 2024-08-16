@@ -215,6 +215,36 @@ class EditBasketView(View):
     #     return HttpResponse("Invalid request method or parameters", status=400)
 
 
+class OrderHistoryView(View):
+    def get(self, request):
+        paginator = Paginator(Order.objects.filter(is_paid=True).order_by('-created_at'), 10)
+        page = request.GET.get('page')
+        orders = paginator.get_page(page)
+        ctx = {
+            'orders': orders
+        }
+
+        return render(request, 'localfood_app/order_history.html', ctx)
+
+
+class OrderHistoryDetailView(View):
+    def get(self, request, order_id):
+        paginator = Paginator(OrderProduct.objects.filter(order_id=order_id), 10)
+        page = request.GET.get('page')
+        order_products = paginator.get_page(page)
+        total_price = sum(order_product.calculate_total_price() for order_product in order_products)
+        ctx = {
+            'order_products': order_products,
+            'total_price': total_price,
+        }
+
+        return render(request, 'localfood_app/history_detail.html', ctx)
+
+
+
+
+
+
 
 
 

@@ -30,12 +30,61 @@
                 <nav class="col-md-2 bg-light py-3"></nav>
                 <main class="col-md-7 py-2">
                     {% block content %}
-                        
+                        <div class="dashboard-content border-dashed p-3 m-4 view-height">
+        <div class="row border-bottom border-3 p-1 m-1">
+            <div class="col noPadding">
+                <h3 class="color-header text-uppercase">Order Details</h3>
+            </div>
+        </div>
+        <table class="table border-bottom schedules-content">
+            <thead>
+                <tr class="d-flex text-color-darker">
+                    <th scope="col" class="col-1">IMAGE</th>
+                    <th scope="col" class="col-2">NAME</th>
+                    <th scope="col" class="col-5">DESCRIPTION</th>
+                    <th scope="col" class="col-2">QUANTITY</th>
+                    <th scope="col" class="col-1">PRICE</th>
+                </tr>
+            </thead>
+            <tbody class="text-color-lighter">
+                {% for order_product in order_products %}
+                <tr class="d-flex">
+                    <td class="col-1">
+                        {% if order_product.product.get_primary_image %}
+                            <img src="{{ order_product.product.get_primary_image.file_path.url }}" alt="{{ order_product.product.name }}" class="img-fluid">
+                        {% else %}
+                            <img src="{% static 'default-image.jpg' %}" alt="No image" class="img-thumbnail" style="width: 100px; height: auto;">
+                        {% endif %}
+                    </td>
+                    <td class="col-2">{{ order_product.product.name }}</td>
+                    <td class="col-5">{{ order_product.product.description }}</td>
+                    <td class="col-1">{{ order_product.quantity }} szt</td>
+                    <td class="col-1"></td>
+                    <td class="col-1">{{ order_product.product.price }} zł</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            <span class="step-links">
+                {% if order_products.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ order_products.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="current">
+                    Page {{ order_products.number }} of {{ order_products.paginator.num_pages }}.
+                </span>
+                {% if order_products.has_next %}
+                    <a href="?page={{ order_products.next_page_number }}">next</a>
+                    <a href="?page={{ order_products.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
                     {% endblock %}
                 </main>
                 <aside class="col-md-3 bg-light py-3">
-                    <h3>Basket Summary</h3>
-                    <p>Items in basket:</p>
+                    <p>Items in order:</p>
                     <ul class="list-unstyled">
                         {% for order_product in order_products %}
                             <li class="d-flex justify-content-between py-2">
@@ -48,12 +97,6 @@
                         <div class="font-weight-bold mb-2">
                             Total: {{ total_price|floatformat:2 }} PLN
                         </div>
-                        <form method="post" action="" style="display:inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="payment" value="paid">
-                            <input type="hidden" name="order_id" value="{{ order.id }}">
-                            <button type="submit" class="btn btn-success btn-md rounded m-1">Pay</button>
-                        </form>
                     </div>
                 </aside>
             </div>
@@ -65,3 +108,4 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
