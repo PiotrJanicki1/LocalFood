@@ -25,6 +25,6 @@ urlpatterns = [
     path('ongoing_sale/', OngoingSaleView.as_view(), name='ongoing_sale'),
     path('category/<slug:slug>/', CategoryProductView.as_view(), name='category'),
     path('basket/', BasketView.as_view(), name='basket'),
-    path('basket/edit/<int:order_id>/', EditBasketView.as_view(), name='edit_basket'),
+    path('basket/edit/<int:order_product_id>/', EditBasketView.as_view(), name='edit_basket'),
 
 ]
