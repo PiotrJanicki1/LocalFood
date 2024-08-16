@@ -65,16 +65,11 @@ class Address(models.Model):
 
 class Order(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, blank=False)
-    quantity = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     realization_date = models.DateTimeField(null=True, blank=True)
     is_paid = models.BooleanField(default=False)
     is_realized = models.BooleanField(default=False)
 
-
-    def calculate_total_price(self):
-        return self.product.price * self.quantity
 
     @classmethod
     def add_product_to_basket(cls, user, product_id):
@@ -82,16 +77,29 @@ class Order(models.Model):
 
         order, created = Order.objects.get_or_create(
             buyer=user,
+            is_paid=False
+        )
+
+        order_product, created = OrderProduct.objects.get_or_create(
+            order=order,
             product=product,
-            is_paid=False,
             defaults={'quantity': 1}
         )
         if not created:
-            order.quantity += 1
-            order.save()
+            order_product.quantity += 1
+            order_product.save()
+
+
+class OrderProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=False, blank=False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=False, blank=False)
+    quantity = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def calculate_total_price(self):
+        return self.product.price * self.quantity
 
 
 class OrderImage(models.Model):
     file_path = models.ImageField(upload_to='order_images/')
-    image_name = models.CharField(max_length=100)
     order = models.ForeignKey(Order, on_delete=models.PROTECT)

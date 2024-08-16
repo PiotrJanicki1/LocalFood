@@ -43,19 +43,19 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><img src="{{  order.product.get_primary_image.file_path.url  }}" alt="{{ order.product.name }}" class="img-thumbnail" style="max-width: 100px;"></td>
-                                    <td>{{ order.product.name }}</td>
-                                    <td>{{ order.product.description }}</td>
+                                    <td><img src="{{ product.product.get_primary_image.file_path.url  }}" alt="{{ product.product.name }}" class="img-thumbnail" style="max-width: 100px;"></td>
+                                    <td>{{ product.product.name }}</td>
+                                    <td>{{ product.product.description }}</td>
                                     <td>
                                         <form  method="post" action="" class="form-inline">
                                             {% csrf_token %}
-                                            <input type="number"  id="quantity" name="quantity" value="{{ order.quantity }}" min="1" max="{{ order.product.quantity }}" class="form-control mr-2" style="width: 100px;">
+                                            <input type="number"  id="quantity" name="quantity" value="{{ product.quantity }}" min="1" max="{{ product.product.quantity }}" class="form-control mr-2" style="width: 100px;">
                                             <button type="submit" class="btn btn-primary btn-sm">Update</button>
                                         </form>
                                     </td>
-                                    <td>{{ order.product.price }} zł</td>
+                                    <td>{{ product.product.price }} zł</td>
                                     <td>
-                                        <form method="post" action="{% url 'localfood_app:edit_basket' order.id %}" style="display:inline;">
+                                        <form method="post" action="{% url 'localfood_app:edit_basket' product.id %}" style="display:inline;">
                                             {% csrf_token %}
                                             <input type="hidden" name="_method" value="delete">
                                             <button type="submit" class="btn btn-danger btn-sm rounded-0 m-1">Delete</button>

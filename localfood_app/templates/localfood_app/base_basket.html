@@ -37,10 +37,10 @@
                     <h3>Basket Summary</h3>
                     <p>Items in basket:</p>
                     <ul class="list-unstyled">
-                        {% for order in orders %}
+                        {% for order_product in order_products %}
                             <li class="d-flex justify-content-between py-2">
-                                <span>{{ order.product.name }}</span>
-                                <span>{{ order.product.price|floatformat:2 }} x {{ order.quantity }} = {{ order.calculate_total_price|floatformat:2 }} zł</span>
+                                <span>{{ order_product.product.name }}</span>
+                                <span>{{ order_product.product.price|floatformat:2 }} x {{ order_product.quantity }} = {{ order_product.calculate_total_price|floatformat:2 }} zł</span>
                             </li>
                         {% endfor %}
                     </ul>
@@ -48,7 +48,12 @@
                         <div class="font-weight-bold mb-2">
                             Total: {{ total_price|floatformat:2 }} PLN
                         </div>
-                        <a href="" class="btn btn-success">Pay</a>
+                        <form method="post" action="" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="payment" value="paid">
+                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                            <button type="submit" class="btn btn-success btn-md rounded m-1">Pay</button>
+                        </form>
                     </div>
                 </aside>
             </div>

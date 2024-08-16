@@ -1,9 +1,11 @@
+from audioop import reverse
+
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .models import Product, User, ProductImage, Order
+from .models import Product, User, ProductImage, Order, OrderProduct
 from .form import UserCreateForm, AddProductForm, LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -106,7 +108,7 @@ class AddProductView(View):
 
 class OngoingSaleView(View):
     def get(self, request):
-        paginator = Paginator(Product.objects.filter(seller=request.user).order_by('created_at'), 10)
+        paginator = Paginator(Product.objects.filter(seller=request.user).order_by('-created_at'), 10)
         page = request.GET.get('page')
         products = paginator.get_page(page)
         return render(request, 'localfood_app/ongoing_sale.html', {'products': products})
@@ -129,52 +131,89 @@ class CategoryProductView(View):
 
 class BasketView(View):
     def get(self, request):
-        paginator = Paginator(Order.objects.filter(is_paid=False).order_by('-created_at'), 20)
-        page = request.GET.get('page')
-        orders = paginator.get_page(page)
-        total_price = sum(order.calculate_total_price() for order in orders)
+        buyer = request.user
 
-        ctx = {
-            'orders': orders,
-            'total_price': total_price
-        }
-        return render(request, 'localfood_app/basket.html', ctx)
+        try:
+            order = Order.objects.get(is_paid=False, buyer=buyer)
+        except Order.DoesNotExist:
+            return render(request, 'localfood_app/basket_empty.html')
+
+
+        if order:
+            order_products = OrderProduct.objects.filter(order=order)
+            paginator = Paginator(order_products.order_by('-created_at'), 20)
+            page = request.GET.get('page')
+            order_products = paginator.get_page(page)
+            total_price = sum(order_product.calculate_total_price() for order_product in order_products)
+
+            ctx = {
+                'order_products': order_products,
+                'total_price': total_price,
+                'order': order
+            }
+            print(f"Order_id: {order.id}")
+            return render(request, 'localfood_app/basket.html', ctx)
+
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.method.lower() == 'post':
+            return self.payment(request)
+        return super().dispatch(request, *args, **kwargs)
+
+
+    def payment(self, request):
+        order_id = request.POST.get('order_id')
+        payment_value = request.POST.get('payment')
+
+        if payment_value == 'paid' and order_id:
+            try:
+                order = Order.objects.get(id=order_id, buyer=request.user)
+                if not order.is_paid:
+                    order.is_paid = True
+                    order.save()
+                return redirect('localfood_app:home')
+            except Order.DoesNotExist:
+                return redirect('localfood_app:basket')
+
+        return redirect('localfood_app:basket')
+
 
 class EditBasketView(View):
-    def get(self, request, order_id):
-        order = get_object_or_404(Order, id=order_id)
-        return render(request, 'localfood_app/edit_basket.html', {'order': order})
+    def get(self, request, order_product_id):
+        product = get_object_or_404(OrderProduct, id=order_product_id)
+        return render(request, 'localfood_app/edit_basket.html', {'product': product})
 
-    def post(self, request, order_id):
-        order = Order.objects.get(id=order_id)
+    def post(self, request, order_product_id):
+        product = OrderProduct.objects.get(id=order_product_id)
         new_quantity = request.POST.get('quantity')
 
         if new_quantity and new_quantity.isdigit():
             new_quantity = int(new_quantity)
             if new_quantity > 0:
-                order.quantity = new_quantity
-                order.save()
+                product.quantity = new_quantity
+                product.save()
 
                 return redirect('localfood_app:basket')
 
             return HttpResponse("Invalid quantity or method", status=400)
 
         elif request.POST.get('_method') == 'delete':
-             order = Order.objects.get(id=order_id)
-             order.delete()
+             product = OrderProduct.objects.get(id=order_product_id)
+             product.delete()
 
              return redirect('localfood_app:basket')
 
         return HttpResponse("Invalid request method or parameters", status=400)
 
 
-    # def delete(self, request, order_id):
+    # def delete(self, request, order_product_id):
     #     if request.POST.get('_method') == 'delete':
-    #         order = Order.objects.get(id=order_id)
-    #         order.delete()
+    #         product = OrderProduct.objects.get(id=order_product_id)
+    #         product.delete()
     #         return redirect('localfood_app:basket')
+    #
+    #     return HttpResponse("Invalid request method or parameters", status=400)
 
-        return HttpResponse("Invalid request method or parameters", status=400)
 
 
 
