@@ -10,6 +10,7 @@ from .views import (
     CategoryProductView,
     BasketView,
     EditBasketView,
+    OrderHistoryView, OrderHistoryDetailView,
 )
 
 
@@ -26,5 +27,8 @@ urlpatterns = [
     path('category/<slug:slug>/', CategoryProductView.as_view(), name='category'),
     path('basket/', BasketView.as_view(), name='basket'),
     path('basket/edit/<int:order_product_id>/', EditBasketView.as_view(), name='edit_basket'),
+
+    path('order_history/', OrderHistoryView.as_view(), name='order_history'),
+    path('order_history/<int:order_id>/', OrderHistoryDetailView.as_view(), name='order_history_detail'),
 
 ]

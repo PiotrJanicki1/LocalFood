@@ -100,6 +100,8 @@ class OrderProduct(models.Model):
         return self.product.price * self.quantity
 
 
+
+
 class OrderImage(models.Model):
     file_path = models.ImageField(upload_to='order_images/')
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
