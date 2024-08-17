@@ -1,0 +1,24 @@
+{% extends 'localfood_app/base_order_history.html' %}
+
+{% block content %}
+  <div class="container">
+        <h1>{{ product.name }}</h1>
+        
+        <div class="product-image mt-4">
+            <img src="{{ product.get_primary_image.file_path.url }}" alt="{{ product.name }}" class="img-fluid">
+        </div>
+
+        <div class="product-details mt-4">
+            <p><strong>Description:</strong> {{ product.description }}</p>
+            <p><strong>Price:</strong> {{ product.price }} PLN</p>
+            <p><strong>Quantity:</strong> {{ product.quantity }}</p>
+            <p><strong>Category:</strong> {{ product.category.name }}</p>
+            <p><strong>Seller:</strong> {{ product.seller.username }}</p>
+        </div>
+        <form method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <button type="submit" class="btn btn-info rounded-0 text-light m-1">Add to basket</button>
+        </form>
+    </div>
+{% endblock %}
