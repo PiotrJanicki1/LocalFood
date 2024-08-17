@@ -241,6 +241,15 @@ class OrderHistoryDetailView(View):
         return render(request, 'localfood_app/history_detail.html', ctx)
 
 
+class ProductDetailView(View):
+    def get(self, request, product_id):
+        product = Product.objects.get(id=product_id)
+        return render(request, 'localfood_app/product_detail.html', {'product': product})
+
+    def post(self, request, product_id):
+        Order.add_product_to_basket(request.user, product_id)
+
+        return redirect('localfood_app:home')
 
 
 
