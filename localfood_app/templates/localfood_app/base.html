@@ -32,7 +32,7 @@
                         </div>
                     {% elif request.user.is_seller %}
                         <div class="col-6 header-buttons">
-                            <a href="/sales/" class="btn btn-primary">Sales</a>
+                            <a href="{% url 'localfood_app:seller_order' %}" class="btn btn-primary">Sales</a>
                             <a class="btn btn-secondary">Profile</a>
                         </div>
                     {% endif %}
