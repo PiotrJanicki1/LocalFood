@@ -4,7 +4,7 @@ from .views import (
     HomePageView,
     CreateUserView,
     LoginView,
-    SalesPageView,
+    # SalesPageView,
     AddProductView,
     OngoingSaleView,
     CategoryProductView,
@@ -12,7 +12,9 @@ from .views import (
     EditBasketView,
     OrderHistoryView,
     OrderHistoryDetailView,
-    ProductDetailView
+    ProductDetailView,
+    SellerOrderView,
+    SellerOrderDetailView
 )
 
 
@@ -21,7 +23,7 @@ app_name = 'localfood_app'
 
 urlpatterns = [
     path('home/', HomePageView.as_view(), name='home'),
-    path('sales/', SalesPageView.as_view(), name='sales'),
+    # path('sales/', SalesPageView.as_view(), name='sales'),
     path('add_product/', AddProductView.as_view(), name='add_product'),
     path('signup/', CreateUserView.as_view(), name='signup'),
     path('login/', LoginView.as_view(), name='login'),
@@ -32,5 +34,7 @@ urlpatterns = [
     path('order_history/', OrderHistoryView.as_view(), name='order_history'),
     path('order_history/<int:order_id>/', OrderHistoryDetailView.as_view(), name='order_history_detail'),
     path('product_detail/<int:product_id>/', ProductDetailView.as_view(), name='product_detail'),
+    path('seller_orders/', SellerOrderView.as_view(), name='seller_order'),
+    path('seller_order_detail/<int:order_id>/', SellerOrderDetailView.as_view(), name='seller_order_detail'),
 
 ]

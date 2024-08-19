@@ -27,8 +27,6 @@ class HomePageView(LoginRequiredMixin, View):
         return redirect(request.META.get('HTTP_REFERER'))
 
 
-
-
 class CreateUserView(View):
     def get(self, request):
         form = UserCreateForm
@@ -77,11 +75,6 @@ class LoginView(View):
         return render(request, 'localfood_app/login.html', {'form': form})
 
 
-class SalesPageView(View):
-    def get(self, request):
-        return render(request, 'localfood_app/sales_page.html')
-
-
 class AddProductView(View):
     def get(self, request):
         form = AddProductForm()
@@ -128,7 +121,6 @@ class CategoryProductView(View):
         return redirect(request.META.get('HTTP_REFERER'))
 
 
-
 class BasketView(View):
     def get(self, request):
         buyer = request.user
@@ -137,7 +129,6 @@ class BasketView(View):
             order = Order.objects.get(is_paid=False, buyer=buyer)
         except Order.DoesNotExist:
             return render(request, 'localfood_app/basket_empty.html')
-
 
         if order:
             order_products = OrderProduct.objects.filter(order=order)
@@ -192,7 +183,6 @@ class EditBasketView(View):
             if new_quantity > 0:
                 product.quantity = new_quantity
                 product.save()
-
                 return redirect('localfood_app:basket')
 
             return HttpResponse("Invalid quantity or method", status=400)
@@ -202,7 +192,6 @@ class EditBasketView(View):
              product.delete()
 
              return redirect('localfood_app:basket')
-
         return HttpResponse("Invalid request method or parameters", status=400)
 
 
@@ -251,6 +240,33 @@ class ProductDetailView(View):
 
         return redirect('localfood_app:home')
 
+
+class SellerOrderView(View):
+    def get(self, request):
+        seller = request.user
+
+        order_products = OrderProduct.objects.filter(product__seller=seller)
+        orders = Order.objects.filter(orderproduct__in=order_products).distinct()
+
+        ctx = {
+            'order_products': order_products,
+            'orders': orders
+        }
+        return render(request, 'localfood_app/seller_orders.html', ctx)
+
+
+class SellerOrderDetailView(View):
+    def get(self, request, order_id):
+        paginator = Paginator(OrderProduct.objects.filter(order_id=order_id), 10)
+        page = request.GET.get('page')
+        order_products = paginator.get_page(page)
+        total_price = sum(order_product.calculate_total_price() for order_product in order_products)
+        ctx = {
+            'order_products': order_products,
+            'total_price': total_price,
+        }
+
+        return render(request, 'localfood_app/seller_order_detail.html', ctx)
 
 
 
