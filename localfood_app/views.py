@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Product, User, ProductImage, Order, OrderProduct
@@ -51,7 +51,7 @@ class CreateUserView(View):
        :param request: The HTTP request object.
        :return: Rendered signup page with the registration form.
        """
-        form = UserCreateForm
+        form = UserCreateForm()
         return render(request, 'localfood_app/signup.html', {'form': form})
 
     def post(self, request):
@@ -59,7 +59,8 @@ class CreateUserView(View):
         Handles POST requests to create a new user account.
 
         :param request: The HTTP request object.
-        :return: Redirects to the login page if successful, otherwise re-renders the signup page with errors.
+        :return: Redirects to the login page if successful,
+         otherwise re-renders the signup page with errors.
         """
         form = UserCreateForm(request.POST)
         if form.is_valid():
@@ -103,7 +104,8 @@ class LoginView(View):
         Handles POST requests to authenticate and log in a user.
 
         :param request: The HTTP request object.
-        :return: Redirects to the home page if successful, otherwise re-renders the login page with errors.
+        :return: Redirects to the home page if successful,
+         otherwise re-renders the login page with errors.
         """
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -132,13 +134,13 @@ class AddProductView(View):
         form = AddProductForm()
         return render(request, 'localfood_app/add_product.html', {'form': form})
 
-
     def post(self, request):
         """
         Handles POST requests to create a new product.
 
         :param request: The HTTP request object.
-        :return: Redirects to the ongoing sales page if successful, otherwise re-renders the add product page with errors.
+        :return: Redirects to the ongoing sales page if successful,
+         otherwise re-renders the add product page with errors.
         """
         form = AddProductForm(request.POST, request.FILES)
 
@@ -152,8 +154,10 @@ class AddProductView(View):
                     product=product,
                     file_path=request.FILES['file_path'],
                 )
-
+            print(f"Product saved: {product}")
             return redirect('localfood_app:ongoing_sale')
+        else:
+            print(f"Form errors: {form.errors}")
         return render(request, 'localfood_app/add_product.html', {'form': form})
 
 
@@ -168,7 +172,8 @@ class OngoingSaleView(View):
         :param request: The HTTP request object.
         :return: Rendered ongoing sales page with a list of products.
         """
-        paginator = Paginator(Product.objects.filter(seller=request.user).order_by('-created_at'), 10)
+        paginator = Paginator(Product.objects.filter(seller=request.user).
+                              order_by('-created_at'), 10)
         page = request.GET.get('page')
         products = paginator.get_page(page)
         return render(request, 'localfood_app/ongoing_sale.html', {'products': products})
@@ -186,7 +191,8 @@ class CategoryProductView(View):
         :param slug: The slug of the category.
         :return: Rendered category products page with a list of products.
         """
-        paginator = Paginator(Product.objects.filter(category__slug=slug).order_by('-created_at'), 10)
+        paginator = Paginator(Product.objects.filter(category__slug=slug).
+                              order_by('-created_at'), 10)
         page = request.GET.get('page')
         products = paginator.get_page(page)
         return render(request, 'localfood_app/dashboard.html', {'products': products})
@@ -214,7 +220,8 @@ class BasketView(View):
         Handles GET requests to display the user's current shopping basket.
 
         :param request: The HTTP request object.
-        :return: Rendered basket page with order products and total price, or an empty basket page if no items.
+        :return: Rendered basket page with order products and total price,
+         or an empty basket page if no items.
         """
         buyer = request.user
 
@@ -228,7 +235,8 @@ class BasketView(View):
             paginator = Paginator(order_products.order_by('-created_at'), 20)
             page = request.GET.get('page')
             order_products = paginator.get_page(page)
-            total_price = sum(order_product.calculate_total_price() for order_product in order_products)
+            total_price = sum(order_product.calculate_total_price()
+                              for order_product in order_products)
 
             ctx = {
                 'order_products': order_products,
@@ -236,7 +244,6 @@ class BasketView(View):
                 'order': order
             }
             return render(request, 'localfood_app/basket.html', ctx)
-
 
     def dispatch(self, request, *args, **kwargs):
         """
@@ -249,28 +256,36 @@ class BasketView(View):
             return self.payment(request)
         return super().dispatch(request, *args, **kwargs)
 
-
     def payment(self, request):
         """
         Handles payment processing for an order.
 
         :param request: The HTTP request object.
-        :return: Redirects to the home page if payment is successful, otherwise redirects to the basket page.
+        :return: Redirects to the home page if payment is successful,
+         otherwise redirects to the basket page.
         """
         order_id = request.POST.get('order_id')
         payment_value = request.POST.get('payment')
 
-        if payment_value == 'paid' and order_id:
-            try:
-                order = Order.objects.get(id=order_id, buyer=request.user)
-                if not order.is_paid:
-                    order.is_paid = True
-                    order.save()
-                return redirect('localfood_app:home')
-            except Order.DoesNotExist:
-                return redirect('localfood_app:basket')
+        if not order_id or not payment_value:
+            return HttpResponseBadRequest("Order ID and payment value are required.")
 
-        return redirect('localfood_app:basket')
+        if not order_id.isdigit():
+            return HttpResponseBadRequest("Invalid order ID format.")
+
+        order_id = int(order_id)
+
+        if payment_value != 'paid':
+            return HttpResponseBadRequest("Invalid payment value.")
+
+        try:
+            order = Order.objects.get(id=order_id, buyer=request.user)
+            if not order.is_paid:
+                order.is_paid = True
+                order.save()
+            return redirect('localfood_app:home')
+        except Order.DoesNotExist:
+            return redirect('localfood_app:basket')
 
 
 class EditBasketView(View):
@@ -309,12 +324,11 @@ class EditBasketView(View):
             return HttpResponse("Invalid quantity or method", status=400)
 
         elif request.POST.get('_method') == 'delete':
-             product = OrderProduct.objects.get(id=order_product_id)
-             product.delete()
+            product = OrderProduct.objects.get(id=order_product_id)
+            product.delete()
 
-             return redirect('localfood_app:basket')
+            return redirect('localfood_app:basket')
         return HttpResponse("Invalid request method or parameters", status=400)
-
 
     # def delete(self, request, order_product_id):
     #     if request.POST.get('_method') == 'delete':
@@ -411,7 +425,9 @@ class SellerOrderView(View):
         """
         seller = request.user
 
-        order_products = OrderProduct.objects.filter(product__seller=seller)
+        paginator = Paginator(OrderProduct.objects.filter(product__seller=seller), 10)
+        page = request.GET.get('page')
+        order_products = paginator.get_page(page)
         orders = Order.objects.filter(orderproduct__in=order_products).distinct()
 
         ctx = {

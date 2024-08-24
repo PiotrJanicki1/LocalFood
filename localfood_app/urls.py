@@ -1,10 +1,8 @@
 from django.urls import path
-import localfood_app.views as views
 from .views import (
     HomePageView,
     CreateUserView,
     LoginView,
-    # SalesPageView,
     AddProductView,
     OngoingSaleView,
     CategoryProductView,
