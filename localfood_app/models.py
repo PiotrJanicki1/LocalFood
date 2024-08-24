@@ -137,11 +137,11 @@ class Order(models.Model):
     is_paid = models.BooleanField(default=False)
     is_realized = models.BooleanField(default=False)
 
-
     @classmethod
     def add_product_to_basket(cls, user, product_id):
         """
-        Adds a product to the user's shopping basket. If the product is already in the basket, increments the quantity.
+        Adds a product to the user's shopping basket.
+        If the product is already in the basket, increments the quantity.
 
         :param user: The user who is adding the product to the basket.
         :param product_id: The ID of the product to add.

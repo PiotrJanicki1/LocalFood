@@ -1,8 +1,8 @@
 from typing import Any
 from .models import Product
 import django.forms as forms
-from django.core.exceptions import ValidationError
 from .validators import validate_username_unique
+from django.contrib.auth import authenticate
 
 
 class UserCreateForm(forms.Form):
@@ -43,8 +43,12 @@ class UserCreateForm(forms.Form):
             ValidationError: If the two passwords do not match.
         """
         data = super().clean()
-        if data['password1'] != data['password2']:
-            raise ValidationError('Passwords must match')
+        password1 = data.get('password1')
+        password2 = data.get('password2')
+
+        if password1 and password2 and password1 != password2:
+            self.add_error('password2', 'Passwords must match')
+
         return data
 
 
@@ -59,6 +63,16 @@ class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username")
+        password = cleaned_data.get("password")
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user is None:
+                raise forms.ValidationError("Please enter a correct username and password.")
+        return cleaned_data
 
 
 class AddProductForm(forms.ModelForm):
