@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="container-fluid">
+            <header class="row bg-light py-3 align-items-center">
+                <div class="col-2">
+                    <h1 id="logo">
+                        <a href="{% url 'localfood_app:home' %}">
+                            <img src="{% static 'images/localfood_app/logo2.png' %}" alt="Logo">
+                        </a>
+                    </h1>
+                </div>
+                <div class="col-4 text-right"></div>
+                    <div class="col-6 header-buttons">
+                        <a href="{% url 'localfood_app:basket' %}" class="btn btn-primary me-2">Basket</a>
+                        <a href="{% url 'localfood_app:order_history' %}" class="btn btn-primary me-2">Orders</a>
+                        <a href="{% url 'localfood_app:profile' %}" class="btn btn-secondary">Profile</a>
+                    </div>
+            </header>
+            <div class="row">
+                <nav class="col-md-2 bg-light py-3"></nav>
+                <main class="col-md-7 py-2">
+                    {% block content %}
+                       <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">IMAGE</th>
+                                    <th scope="col">NAME</th>
+                                    <th scope="col">DESCRIPTION</th>
+                                    <th scope="col">QUANTITY</th>
+                                    <th scope="col">PRICE</th>
+                                    <th scope="col">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><img src="{{ product.product.get_primary_image.file_path.url  }}" alt="{{ product.product.name }}" class="img-thumbnail" style="max-width: 100px;"></td>
+                                    <td>{{ product.product.name }}</td>
+                                    <td>{{ product.product.description }}</td>
+                                    <td>
+                                        <form  method="post" action="" class="form-inline">
+                                            {% csrf_token %}
+                                            <input type="number"  id="quantity" name="quantity" value="{{ product.quantity }}" min="1" max="{{ product.product.quantity }}" class="form-control mr-2" style="width: 100px;">
+                                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                                        </form>
+                                    </td>
+                                    <td>{{ product.product.price }} zł</td>
+                                    <td>
+                                        <form method="post" action="{% url 'localfood_app:edit_basket' product.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="_method" value="delete">
+                                            <button type="submit" class="btn btn-danger btn-sm rounded-0 m-1">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    {% endblock %}
+                </main>
+                <aside class="col-md-3 bg-light py-3">
+                </aside>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends 'localfood_app/base_basket.html' %}
+
+{% block content %}
+     {% load static %}
+    <div class="dashboard-content border-dashed p-3 m-4 view-height">
+        <div class="row border-bottom border-3 p-1 m-1">
+            <div class="col noPadding">
+                <h3 class="color-header text-uppercase"> Your Basket</h3>
+            </div>
+        </div>
+        <table class="table border-bottom schedules-content">
+            <thead>
+                <tr class="d-flex text-color-darker">
+                    <th scope="col" class="col-1">IMAGE</th>
+                    <th scope="col" class="col-2">NAME</th>
+                    <th scope="col" class="col-5">DESCRIPTION</th>
+                    <th scope="col" class="col-2">QUANTITY</th>
+                    <th scope="col" class="col-1">PRICE</th>
+                    <th scope="col" class="col-4 center">ACTION</th>
+                </tr>
+            </thead>
+            <tbody class="text-color-lighter">
+                {% for order_product in order_products %}
+                <tr class="d-flex">
+                    <td class="col-1">
+                        {% if order_product.product.get_primary_image %}
+                            <img src="{{ order_product.product.get_primary_image.file_path.url }}" alt="{{ order_product.order_product.product.name }}" class="img-fluid">
+                        {% else %}
+                            <img src="{% static 'default-image.jpg' %}" alt="No image" class="img-thumbnail" style="width: 100px; height: auto;">
+                        {% endif %}
+                    </td>
+                    <td class="col-2">{{ order_product.product.name }}</td>
+                    <td class="col-5">{{ order_product.product.description }}</td>
+                    <td class="col-1">{{ order_product.quantity }} szt</td>
+                    <td class="col-1"></td>
+                    <td class="col-1">{{ order_product.product.price }} zł</td>
+                    <td class="col-1  d-flex align-items-center justify-content-center flex-wrap">
+                        <a href="{% url 'localfood_app:edit_basket' order_product.id %}" class="btn btn-info rounded-0 text-light m-1">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            <span class="step-links">
+                {% if order_products.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ order_products.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="current">
+                    Page {{ order_products.number }} of {{ order_products.paginator.num_pages }}.
+                </span>
+                {% if order_products.has_next %}
+                    <a href="?page={{ order_products.next_page_number }}">next</a>
+                    <a href="?page={{ order_products.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'localfood_app/base_sales_page.html' %}
+
+{% block content %}
+    <div class="dashboard-content border-dashed p-3 m-4 view-height">
+        <div class="row border-bottom border-3 p-1 m-1">
+            <div class="col noPadding">
+                <h3 class="color-header text-uppercase">Orders Containing Your Products</h3>
+            </div>
+        </div>
+        <table class="table border-bottom schedules-content">
+            <thead>
+                <tr class="d-flex text-color-darker">
+                    <th scope="col" class="col-2">Order ID</th>
+                    <th scope="col" class="col-3">Buyer</th>
+                    <th scope="col" class="col-5">Date</th>
+                    <th scope="col" class="col-2">Action</th>
+                </tr>
+            </thead>
+            <tbody class="text-color-lighter">
+                {% for order in orders %}
+                <tr class="d-flex">
+                    <td class="col-2">{{ order.id }}</td>
+                    <td class="col-3">{{ order.buyer.username }}</td>
+                    <td class="col-4">{{ order.created_at }}</td>
+                    <td class="col-3 d-flex align-items-center justify-content-center">
+                        <a href="{% url 'localfood_app:seller_order_detail' order.id %}" class="btn btn-info rounded-0 text-light">Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            <span class="step-links">
+                {% if orders.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ orders.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="current">
+                    Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+                </span>
+                {% if orders.has_next %}
+                    <a href="?page={{ orders.next_page_number }}">next</a>
+                    <a href="?page={{ orders.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}

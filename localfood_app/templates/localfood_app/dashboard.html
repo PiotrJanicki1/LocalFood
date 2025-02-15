@@ -1,0 +1,64 @@
+{% extends 'localfood_app/base.html' %}
+
+{% block content %}
+    {% load static %}
+    <div class="dashboard-content border-dashed p-3 m-4 view-height">
+        <div class="row border-bottom border-3 p-1 m-1">
+            <div class="col noPadding">
+                <h3 class="color-header text-uppercase"> Recently added</h3>
+            </div>
+        </div>
+        <table class="table border-bottom schedules-content">
+            <thead>
+                <tr class="d-flex text-color-darker">
+                    <th scope="col" class="col-1">IMAGE</th>
+                    <th scope="col" class="col-2">NAME</th>
+                    <th scope="col" class="col-7">DESCRIPTION</th>
+                    <th scope="col" class="col-2 center">ACTION</th>
+                </tr>
+            </thead>
+            <tbody class="text-color-lighter">
+                {% for product in products %}
+                <tr class="d-flex">
+                    <td class="col-1">
+                        {% if product.get_primary_image %}
+                            <img src="{{ product.get_primary_image.file_path.url }}" alt="{{ product.name }}" class="img-fluid">
+                        {% else %}
+                            <img src="{% static 'default-image.jpg' %}" alt="No image" class="img-thumbnail" style="width: 100px; height: auto;">
+                        {% endif %}
+                    </td>
+                    <td class="col-2">{{ product.name }}</td>
+                    <td class="col-7">{{ product.description }}</td>
+                    <td class="col-2 d-flex align-items-center justify-content-center flex-wrap">
+                        <a href="{% url 'localfood_app:product_detail' product.id %}" class="btn btn-info rounded-0 text-light m-1">Details</a>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            {% if request.user.is_authenticated %}
+                                {% if request.user.is_buyer %}
+                                    <button type="submit" class="btn btn-info rounded-0 text-light m-1">Add to basket</button>
+                                {% endif %}    
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            <span class="step-links">
+                {% if products.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ products.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="current">
+                    Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                </span>
+                {% if products.has_next %}
+                    <a href="?page={{ products.next_page_number }}">next</a>
+                    <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock %}
