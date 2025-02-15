@@ -7,7 +7,6 @@
     <title>{% block title %}Home page{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <div class="main-container">
@@ -20,20 +19,35 @@
                         </a>
                     </h1>
                 </div>
-                <div class="col-4 text-right">
-                    <input type="text" id="search" class="form-control" placeholder="Wyszukiwarka">
+                <div class="col-4">
+                  <form method="GET" action="{% url 'localfood_app:search' %}">
+                        <div class="input-group">
+                          <input
+                            type="text"
+                            id="search"
+                            name="q"
+                            class="form-control"
+                            placeholder="Search here..."
+                            value="{{ query }}"
+                          >
+                          <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                          </div>
+                        </div>
+                      </form>
                 </div>
+
                 {% if request.user.is_authenticated %}
                     {% if request.user.is_buyer %}
-                        <div class="col-6 header-buttons">
-                            <a href="{% url 'localfood_app:basket' %}" class="btn btn-primary me-2">Basket</a>
-                            <a href="{% url 'localfood_app:order_history' %}" class="btn btn-primary me-2">Order History</a>
-                            <a class="btn btn-secondary">Profile</a>
+                        <div class="col-6 d-flex justify-content-end">
+                            <a href="{% url 'localfood_app:basket' %}" class="btn btn-primary mx-1">Basket</a>
+                            <a href="{% url 'localfood_app:order_history' %}" class="btn btn-primary mx-1">Order History</a>
+                            <a href="{% url 'localfood_app:profile' %}" class="btn btn-secondary mx-1">Profile</a>
                         </div>
                     {% elif request.user.is_seller %}
-                        <div class="col-6 header-buttons">
-                            <a href="{% url 'localfood_app:seller_order' %}" class="btn btn-primary">Sales</a>
-                            <a class="btn btn-secondary">Profile</a>
+                        <div class="col-6 d-flex justify-content-end">
+                            <a href="{% url 'localfood_app:seller_order' %}" class="btn btn-primary mx-1">Sales</a>
+                            <a href="{% url 'localfood_app:profile' %}" class="btn btn-secondary mx-1">Profile</a>
                         </div>
                     {% endif %}
                 {% endif %}

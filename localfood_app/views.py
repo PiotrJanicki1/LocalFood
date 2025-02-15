@@ -1,10 +1,15 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeView
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls.base import reverse_lazy
 from django.views import View
+from django.views.generic.edit import UpdateView
+
 from .models import Product, User, ProductImage, Order, OrderProduct
-from .form import UserCreateForm, AddProductForm, LoginForm
+from .form import UserCreateForm, AddProductForm, LoginForm, ProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -42,7 +47,8 @@ class HomePageView(LoginRequiredMixin, View):
 
 class CreateUserView(View):
     """
-    View for handling user registration.
+    View for handling user
+    istration.
     """
     def get(self, request):
         """
@@ -350,7 +356,7 @@ class OrderHistoryView(View):
         :param request: The HTTP request object.
         :return: Rendered order history page with a list of orders.
         """
-        paginator = Paginator(Order.objects.filter(is_paid=True).order_by('-created_at'), 10)
+        paginator = Paginator(Order.objects.filter(is_paid=True, buyer = request.user).order_by('-created_at'), 10)
         page = request.GET.get('page')
         orders = paginator.get_page(page)
         ctx = {
@@ -372,7 +378,7 @@ class OrderHistoryDetailView(View):
         :param order_id: The ID of the order to display details for.
         :return: Rendered order detail page with the order products and total price.
         """
-        paginator = Paginator(OrderProduct.objects.filter(order_id=order_id), 10)
+        paginator = Paginator(OrderProduct.objects.filter(order_id=order_id, order__buyer = request.user), 10)
         page = request.GET.get('page')
         order_products = paginator.get_page(page)
         total_price = sum(order_product.calculate_total_price() for order_product in order_products)
@@ -449,7 +455,7 @@ class SellerOrderDetailView(View):
         :param order_id: The ID of the order to display details for.
         :return: Rendered seller order detail page with the order products and total price.
         """
-        paginator = Paginator(OrderProduct.objects.filter(order_id=order_id), 10)
+        paginator = Paginator(OrderProduct.objects.filter(order_id=order_id, product__seller=request.user), 10)
         page = request.GET.get('page')
         order_products = paginator.get_page(page)
         total_price = sum(order_product.calculate_total_price() for order_product in order_products)
@@ -459,3 +465,117 @@ class SellerOrderDetailView(View):
         }
 
         return render(request, 'localfood_app/seller_order_detail.html', ctx)
+
+class ProductSearchView(View):
+    """
+    View for handling product search functionality.
+    """
+    def get(self, request):
+        """
+        Handles GET requests to search for products based on user input.
+
+        :param request: The HTTP request object containing the search query.
+        :return: Rendered search results page with filtered products and pagination.
+        """
+        query = request.GET.get('q', '').strip()
+
+        if query:
+            queryset = Product.objects.filter(name__icontains=query)
+
+        else:
+            queryset = Product.objects.all()
+
+        paginator = Paginator(queryset, 10)
+        page = request.GET.get('page')
+        products = paginator.get_page(page)
+
+        ctx = {
+            'products': products,
+            'query': query,
+        }
+
+        return render(request, 'localfood_app/search.html', ctx)
+
+class ProfileView(View):
+    """
+    View for displaying and editing the user's profile.
+    """
+    def get(self, request):
+        """
+        Handles GET requests to display the user's profile page.
+
+        :param request: The HTTP request object.
+        :return: Rendered profile page with user details.
+        """
+        return render(request, 'localfood_app/profile.html', {'user': request.user})
+
+    def profile_edit(self, request):
+        """
+        Handles POST requests for updating user profile information.
+
+        :param request: The HTTP request object containing updated profile data.
+        :return: Redirects to the profile page upon successful update.
+        """
+        if request.method == 'POST':
+            form = ProfileForm(request.POST, instance=request.user)
+            if form.is_valid():
+                form.save()
+                return redirect('localfood_app:profile')
+
+        else:
+            form = ProfileForm(instance=request.user)
+
+        return render(request, 'localfood_app/profile_edit.html', {'form': form})
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    View for updating user profile details.
+    """
+    model = User
+    form_class = ProfileForm
+    template_name = 'localfood_app/profile_edit.html'
+    success_url = reverse_lazy('localfood_app:profile')
+
+    def get_object(self):
+        """
+        Returns the current user instance to be updated.
+
+        :return: The logged-in user instance.
+        """
+        return self.request.user
+
+
+class UserPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    """
+    View for allowing users to change their passwords.
+    """
+    template_name = 'localfood_app/change_password.html'
+    success_url = reverse_lazy('localfood_app:profile')
+    form_class = PasswordChangeForm
+
+    def form_valid(self, form):
+        """
+        Handles successful password change and updates the session.
+
+        :param form: The password change form submitted by the user.
+        :return: Redirects to the profile page upon successful password update.
+        """
+        user = form.save()
+        update_session_auth_hash(self.request, user)
+        return super().form_valid(form)
+
+
+class LogoutView(View):
+    """
+    View for handling user logout functionality.
+    """
+
+    def get(self, request):
+        """
+        Handles GET requests to log the user out and redirect to home.
+
+        :param request: The HTTP request object.
+        :return: Redirects to the home page after logging out.
+        """
+        logout(request)
+        return redirect('localfood_app:home')
