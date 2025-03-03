@@ -1,46 +1,54 @@
-{% extends 'localfood_app/base_order_history.html' %}
+{% extends 'localfood_app/base.html' %}
+{% load static %}
 
-{% block title %}My Profile{% endblock %}
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block user_menu %}
+    {% include 'localfood_app/user_menu.html' %}
+{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h2 class="mb-4">My Profile</h2>
+    <div class="container py-4">
+        <h2 class="mb-4">My Profile</h2>
 
-    <div class="row">
-        <!-- Sidebar with profile menu -->
-        <div class="col-md-4">
-            <div class="list-group">
-                <a href="" class="list-group-item list-group-item-action active">
-                    Overview
-                </a>
-                <a href="{% url 'localfood_app:profile_edit' %}" class="list-group-item list-group-item-action">
-                    Edit Profile
-                </a>
-                <a href="{% url 'localfood_app:change_password' %}" class="list-group-item list-group-item-action">
-                    Change Password
-                </a>
-                <a href="{% url 'localfood_app:logout' %}" class="list-group-item list-group-item-action text-danger">
-                    Logout
-                </a>
+        <div class="row">
+            <!-- Sidebar with profile menu -->
+            <div class="col-md-4">
+                <div class="list-group">
+                    <a href="" class="list-group-item list-group-item-action active">
+                        Overview
+                    </a>
+                    <a href="{% url 'localfood_app:profile_edit' %}" class="list-group-item list-group-item-action">
+                        Edit Profile
+                    </a>
+                    <a href="{% url 'localfood_app:change_password' %}" class="list-group-item list-group-item-action">
+                        Change Password
+                    </a>
+                    <a href="{% url 'localfood_app:logout' %}"
+                       class="list-group-item list-group-item-action text-danger">
+                        Logout
+                    </a>
+                </div>
             </div>
-        </div>
 
-        <!-- Profile details section -->
-        <div class="col-md-8">
-            <div class="card p-4 shadow-sm">
-                <h4>Profile Information</h4>
-                <hr>
-                <div class="row">
-                    <div class="col-md-8">
-                        <p><strong>Username:</strong> {{ user.username }}</p>
-                        <p><strong>Email:</strong> {{ user.email }}</p>
-                        <p><strong>First Name:</strong> {{ user.first_name }}</p>
-                        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-                        <p><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+            <!-- Profile details section -->
+            <div class="col-md-8">
+                <div class="card p-4 shadow-sm">
+                    <h4>Profile Information</h4>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p><strong>Username:</strong> {{ user.username }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>First Name:</strong> {{ user.first_name }}</p>
+                            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+                            <p><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

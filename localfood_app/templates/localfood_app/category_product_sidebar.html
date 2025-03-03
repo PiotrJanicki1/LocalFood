@@ -1,0 +1,18 @@
+<nav class="col-md-2 bg-light py-3">
+    <h4>Categories</h4>
+    <div class="container">
+        <table class="table">
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td>
+                        <a class="nav-link text-dark" href="{% url 'localfood_app:category' category.slug %}">
+                            <span>{{ category.name }}</span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</nav>

@@ -1,4 +1,17 @@
-{% extends 'localfood_app/base_sales_page.html' %}
+{% extends 'localfood_app/base.html' %}
+{% load static %}
+
+{% block title %}
+    Seller orders
+{% endblock %}
+
+{% block user_menu %}
+    {% include 'localfood_app/user_menu.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'localfood_app/sales_sidebar.html' %}
+{% endblock %}
 
 {% block content %}
     <div class="dashboard-content border-dashed p-3 m-4 view-height">
@@ -9,24 +22,25 @@
         </div>
         <table class="table border-bottom schedules-content">
             <thead>
-                <tr class="d-flex text-color-darker">
-                    <th scope="col" class="col-2">Order ID</th>
-                    <th scope="col" class="col-3">Buyer</th>
-                    <th scope="col" class="col-5">Date</th>
-                    <th scope="col" class="col-2">Action</th>
-                </tr>
+            <tr class="d-flex text-color-darker">
+                <th scope="col" class="col-2">Order ID</th>
+                <th scope="col" class="col-3">Buyer</th>
+                <th scope="col" class="col-5">Date</th>
+                <th scope="col" class="col-2">Action</th>
+            </tr>
             </thead>
             <tbody class="text-color-lighter">
-                {% for order in orders %}
+            {% for order in orders %}
                 <tr class="d-flex">
                     <td class="col-2">{{ order.id }}</td>
                     <td class="col-3">{{ order.buyer.username }}</td>
                     <td class="col-4">{{ order.created_at }}</td>
                     <td class="col-3 d-flex align-items-center justify-content-center">
-                        <a href="{% url 'localfood_app:seller_order_detail' order.id %}" class="btn btn-info rounded-0 text-light">Details</a>
+                        <a href="{% url 'localfood_app:seller_order_detail' order.id %}"
+                           class="btn btn-info rounded-0 text-light">Details</a>
                     </td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
         </table>
         <div class="pagination">

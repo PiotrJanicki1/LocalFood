@@ -1,15 +1,22 @@
-{% extends 'localfood_app/base_order_history.html' %}
+{% extends 'localfood_app/base.html' %}
+{% load static %}
 
-{% block title %}Edit Profile{% endblock %}
+{% block title %}
+    Profil
+{% endblock %}
+
+{% block user_menu %}
+    {% include 'localfood_app/user_menu.html' %}
+{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h2>Edit Profile</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Save Changes</button>
-        <a href="{% url 'localfood_app:profile' %}" class="btn btn-secondary">Cancel</a>
-    </form>
-</div>
+    <div class="container py-4">
+        <h2>Edit Profile</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <a href="{% url 'localfood_app:profile' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
 {% endblock %}
