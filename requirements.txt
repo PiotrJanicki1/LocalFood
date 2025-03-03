@@ -1,0 +1,53 @@
+# Django Framework
+Django==5.0.7
+sqlparse==0.5.1
+
+# Database
+psycopg2-binary==2.9.9
+
+# Cloud Storage (Google Cloud Storage)
+django-storages==1.14.4
+google-cloud-storage==2.18.0
+google-api-core==2.19.1
+google-auth==2.32.0
+google-auth-httplib2==0.2.0
+google-resumable-media==2.7.1
+google-cloud-core==2.4.1
+google-crc32c==1.5.0
+
+# Authentication
+rsa==4.9
+pyasn1==0.6.0
+pyasn1_modules==0.4.0
+
+# Linting & Code Style
+flake8==7.1.1
+pyflakes==3.2.0
+pycodestyle==2.12.1
+mccabe==0.7.0
+
+# Testing
+pytest==8.3.2
+pytest-django==4.8.0
+
+# HTTP Requests
+requests==2.32.3
+urllib3==2.2.2
+certifi==2024.7.4
+charset-normalizer==3.3.2
+httplib2==0.22.0
+uritemplate==4.1.1
+
+# Utils
+asgiref==3.8.1
+cachetools==5.4.0
+exceptiongroup==1.2.2
+iniconfig==2.0.0
+packaging==24.1
+pillow==10.4.0
+pluggy==1.5.0
+proto-plus==1.24.0
+protobuf==5.27.3
+tomli==2.0.1
+typing_extensions==4.12.2
+idna==3.7

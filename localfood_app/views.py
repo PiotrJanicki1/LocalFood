@@ -234,7 +234,7 @@ class BasketView(View):
         try:
             order = Order.objects.get(is_paid=False, buyer=buyer)
         except Order.DoesNotExist:
-            return render(request, 'localfood_app/basket_empty.html')
+            return render(request, 'localfood_app/basket.html')
 
         if order:
             order_products = OrderProduct.objects.filter(order=order)
@@ -387,7 +387,7 @@ class OrderHistoryDetailView(View):
             'total_price': total_price,
         }
 
-        return render(request, 'localfood_app/history_detail.html', ctx)
+        return render(request, 'localfood_app/order_history_detail.html', ctx)
 
 
 class ProductDetailView(View):
@@ -494,7 +494,7 @@ class ProductSearchView(View):
             'query': query,
         }
 
-        return render(request, 'localfood_app/search.html', ctx)
+        return render(request, 'localfood_app/search_page.html', ctx)
 
 class ProfileView(View):
     """

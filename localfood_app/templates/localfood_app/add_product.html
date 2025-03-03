@@ -1,7 +1,20 @@
-{% extends 'localfood_app/base_sales_page.html' %}
+{% extends 'localfood_app/base.html' %}
+{% load static %}
+
+{% block title %}
+    Add product
+{% endblock %}
+
+{% block user_menu %}
+    {% include 'localfood_app/user_menu.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'localfood_app/sales_sidebar.html' %}
+{% endblock %}
 
 {% block content %}
-   <h1>Add Product</h1>
+    <h1>Add Product</h1>
     <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <table>

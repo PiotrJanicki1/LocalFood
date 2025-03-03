@@ -1,0 +1,14 @@
+<p>Items in order:</p>
+<ul class="list-unstyled">
+    {% for order_product in order_products %}
+        <li class="d-flex justify-content-between py-2">
+            <span>{{ order_product.product.name }}</span>
+            <span>{{ order_product.product.price|floatformat:2 }} x {{ order_product.quantity }} = {{ order_product.calculate_total_price|floatformat:2 }} zł</span>
+        </li>
+    {% endfor %}
+</ul>
+<div class="text-right">
+    <div class="font-weight-bold mb-2">
+        Total: {{ total_price|floatformat:2 }} PLN
+    </div>
+</div>

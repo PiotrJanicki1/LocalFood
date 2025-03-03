@@ -1,9 +1,26 @@
-{% extends 'localfood_app/base_order_history.html' %}
+{% extends 'localfood_app/base.html' %}
+{% load static %}
+
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block search %}
+    {% include 'localfood_app/search.html' %}
+{% endblock %}
+
+{% block sidebar %}
+    {% include 'localfood_app/category_product_sidebar.html' %}
+{% endblock %}
+
+{% block user_menu %}
+    {% include 'localfood_app/user_menu.html' %}
+{% endblock %}
 
 {% block content %}
-  <div class="container">
+    <div class="container">
         <h1>{{ product.name }}</h1>
-        
+
         <div class="product-image mt-4">
             <img src="{{ product.get_primary_image.file_path.url }}" alt="{{ product.name }}" class="img-fluid">
         </div>

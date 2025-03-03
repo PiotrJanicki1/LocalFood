@@ -1,0 +1,14 @@
+{% if request.user.is_authenticated %}
+    {% if request.user.is_buyer %}
+        <div class="col-6 d-flex justify-content-end">
+            <a href="{% url 'localfood_app:basket' %}" class="btn btn-primary mx-1">Basket</a>
+            <a href="{% url 'localfood_app:order_history' %}" class="btn btn-primary mx-1">Order History</a>
+            <a href="{% url 'localfood_app:profile' %}" class="btn btn-secondary mx-1">Profile</a>
+        </div>
+    {% elif request.user.is_seller %}
+        <div class="col-6 d-flex justify-content-end">
+            <a href="{% url 'localfood_app:seller_order' %}" class="btn btn-primary mx-1">Sales</a>
+            <a href="{% url 'localfood_app:profile' %}" class="btn btn-secondary mx-1">Profile</a>
+        </div>
+    {% endif %}
+{% endif %}
